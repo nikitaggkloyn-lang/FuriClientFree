@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuriBeta | Бесплатный чит для Minecraft</title>
+    <link id="favicon" rel="icon" type="image/x-icon" href="https://cdn.discordapp.com/attachments/1466038053914022040/1485661040283877507/55139963-01a2-4dff-a3e8-f0e13b489640.jpg?ex=69c2ad2a&is=69c15baa&hm=78382c5176f0b7b9ce47f308ddd55a9fac21435a92877d3ffe9b31cca03d63f0&">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, #0a0a0a 0%, #000000 100%);
+            z-index: 0;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: repeating-linear-gradient(45deg,
+                rgba(124, 181, 24, 0.03) 0px,
+                rgba(124, 181, 24, 0.03) 2px,
+                transparent 2px,
+                transparent 8px);
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(20px, 20px); }
+        }
+
+        .floating-dots {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dot {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(124, 181, 24, 0.5);
+            border-radius: 50%;
+            animation: floatDot 20s infinite linear;
+        }
+
+        @keyframes floatDot {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-left: 4px solid #7cb518;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Навигация */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 1px solid rgba(124, 181, 24, 0.3);
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #7cb518, #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #7cb518;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid #7cb518;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #7cb518;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(124, 181, 24, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7cb518, #5a8f12);
+            color: #fff;
+            border: none;
+        }
+
+        /* Герой секция */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(124, 181, 24, 0.1), rgba(0,0,0,0));
+            border-radius: 32px;
+            margin: 20px 0;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #7cb518, #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background: rgba(124, 181, 24, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(124, 181, 24, 0.5);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Блок с фотографией (аналогично download-section) */
+        .photo-section {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a, #050505);
+            border: 1px solid rgba(124, 181, 24, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 40px 0;
+            transition: all 0.3s ease;
+        }
+
+        .photo-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124, 181, 24, 0.2);
+            border-color: #7cb518;
+        }
+
+        .photo-section h2 {
+            margin-bottom: 20px;
+            color: #7cb518;
+            font-size: 28px;
+        }
+
+        .photo-container {
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-container:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Секция скачивания */
+        .download-section {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a, #050505);
+            border: 1px solid rgba(124, 181, 24, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .download-stats {
+            font-size: 14px;
+            margin: 20px 0;
+            color: #888;
+        }
+
+        .download-stats span {
+            color: #7cb518;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Кнопка списка пользователей */
+        .users-list-btn {
+            margin-top: 20px;
+            background: rgba(124, 181, 24, 0.2);
+            border-color: #7cb518;
+        }
+
+        /* Модальное окно со списком пользователей */
+        .users-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .users-modal-content {
+            background: linear-gradient(135deg, #111, #0a0a0a);
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #7cb518;
+        }
+
+        .users-modal-content h3 {
+            color: #7cb518;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .users-modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-modal-content th, .users-modal-content td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+
+        .users-modal-content th {
+            color: #7cb518;
+        }
+
+        .close-users-modal {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Особенности */
+        .features {
+            margin: 40px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #0a0a0a, #050505);
+            border: 1px solid rgba(124, 181, 24, 0.2);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            border-color: #7cb518;
+            box-shadow: 0 5px 20px rgba(124, 181, 24, 0.2);
+        }
+
+        .feature-item h4 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #7cb518;
+        }
+
+        /* Профиль */
+        .profile-section {
+            margin: 40px 0;
+        }
+
+        .profile-info {
+            background: linear-gradient(135deg, #0a0a0a, #050505);
+            border: 1px solid rgba(124, 181, 24, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(124, 181, 24, 0.2);
+            margin-top: 60px;
+            color: #666;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        /* Модальное окно авторизации */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #111, #0a0a0a);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #7cb518;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #7cb518;
+            object-fit: cover;
+            margin: 20px auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-animation"></div>
+<div class="floating-dots" id="floatingDots"></div>
+
+<div class="container">
+    <nav class="navbar">
+        <div class="logo">
+            <img class="logo-img" src="https://cdn.discordapp.com/attachments/1466038053914022040/1485661040283877507/55139963-01a2-4dff-a3e8-f0e13b489640.jpg?ex=69c2ad2a&is=69c15baa&hm=78382c5176f0b7b9ce47f308ddd55a9fac21435a92877d3ffe9b31cca03d63f0&" alt="FuriBeta Logo">
+            Furi<span>Beta</span>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Главная</a>
+            <a href="#photo">Скриншот</a>
+            <a href="#features">Особенности</a>
+            <a href="#" id="profileBtn" class="btn">👤 Войти</a>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="badge">⚡ БЕСПЛАТНО | ЛУЧШИЕ ОБХОДЫ ⚡</div>
+        <h1>Furi<span>Beta</span></h1>
+        <img class="avatar" src="https://cdn.discordapp.com/attachments/1466038053914022040/1485661040283877507/55139963-01a2-4dff-a3e8-f0e13b489640.jpg?ex=69c2ad2a&is=69c15baa&hm=78382c5176f0b7b9ce47f308ddd55a9fac21435a92877d3ffe9b31cca03d63f0&" alt="FuriBeta Avatar">
+        <p style="font-size: 18px; margin-top: 20px;">Мощный и надежный чит для Minecraft | Лучшие обходы античитов</p>
+    </section>
+
+    <!-- Блок с фотографией клиента (как download-section) -->
+    <section id="photo" class="photo-section">
+        <h2>📸 Скриншот клиента</h2>
+        <div class="photo-container">
+            <!-- ЗДЕСЬ ВСТАВЬТЕ ВАШУ ПРЯМУЮ ССЫЛКУ НА ФОТО ИЗ DISCORD (cdn.discordapp.com/attachments/...) -->
+            <img src="https://downloader.disk.yandex.ru/disk/b4e2a7d020ac9a01b6453190fdf406d045ff95daf3f7849c1f8ccf2c053c206a/69c19985/FUuuMDaUqx0769UIrdx-A5pHUg7x_Kk35VxCFXOf_zyPRnZ3icYB6WRUiQVK7dcSvqnGQREqy8eM1V_jd1Bxtw%3D%3D?uid=2206974105&filename=fit.jpg&disposition=attachment&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=2206974105&fsize=182396&hid=cecb318f9ae8682f8d0b339a8fefc77c&media_type=image&tknv=v3&etag=59fd54220988a1d5f94e4e6640cf22d9" alt="FuriBeta Screenshot" id="screenshotImg">
+        </div>
+        <p style="margin-top: 15px; color: #888;">✨ Уникальный интерфейс и мощные функции</p>
+    </section>
+
+    <div class="download-section">
+        <h2>⚡ Скачать FuriBeta ⚡</h2>
+        <div class="download-stats">
+            📥 Всего скачиваний: <span id="downloadCount">0</span> | 👥 Пользователей: <span id="userCount">0</span>
+        </div>
+        <button class="btn btn-primary" id="downloadBtn">⬇️ СКАЧАТЬ ЧИТ ⬇️</button>
+
+        <!-- Кнопка для показа списка пользователей (видна только админу) -->
+        <button class="btn users-list-btn" id="showUsersBtn" style="display: none;">📋 Список пользователей</button>
+    </div>
+
+    <!-- Модальное окно со списком пользователей -->
+    <div id="usersModal" class="users-modal">
+        <div class="users-modal-content">
+            <h3>📋 Список зарегистрированных пользователей</h3>
+            <div id="usersTableContainer"></div>
+            <button class="btn close-users-modal" id="closeUsersModal">Закрыть</button>
+        </div>
+    </div>
+
+    <section id="features" class="features">
+        <h2 class="section-title">✨ Ключевые особенности</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <h4>🛡️ Лучшие обходы</h4>
+                <p>Умная система обхода античитов, безопасное использование</p>
+            </div>
+            <div class="feature-item">
+                <h4>⚡ Хорошая оптимизация</h4>
+                <p>Оптимизированный код, минимальная нагрузка на ПК</p>
+            </div>
+            <div class="feature-item">
+                <h4>💎 Расширенный функционал</h4>
+                <p>Красивые визуалы,мощные таргет функции,мясо чуваки</p>
+            </div>
+            <div class="feature-item">
+                <h4>🎮 Поддержка серверов</h4>
+                <p>SpookyTime, FunTime, и другие популярные сервера</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="profileSection" class="profile-section" style="display: none;">
+        <h2 class="section-title">👤 Мой профиль</h2>
+        <div class="profile-info" id="profileInfo"></div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 FuriBeta | Бесплатный чит для Minecraft | Лучшие обходы</p>
+        <p>⚠️ Данный продукт создан в ознакомительных целях ⚠️</p>
+    </footer>
+</div>
+
+<div class="modal" id="authModal">
+    <div class="modal-content">
+        <h3 id="authTitle">Вход в аккаунт</h3>
+        <input type="text" id="authUsername" placeholder="Имя пользователя">
+        <input type="password" id="authPassword" placeholder="Пароль">
+        <button class="btn btn-primary" id="authSubmit" style="width:100%;">Войти</button>
+        <button class="btn" id="authSwitch" style="width:100%; margin-top:10px;">Нет аккаунта? Зарегистрироваться</button>
+        <button class="btn" id="closeModal" style="width:100%; margin-top:10px;">Закрыть</button>
+    </div>
+</div>
+
+<script>
+    function createDots() {
+        const container = document.getElementById('floatingDots');
+        for (let i = 0; i < 100; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.animationDelay = Math.random() * 20 + 's';
+            dot.style.animationDuration = Math.random() * 15 + 10 + 's';
+            container.appendChild(dot);
+        }
+    }
+    createDots();
+
+    function showNotification(message) {
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.innerHTML = message;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+    }
+
+    // Структура данных: users = { username: { password, registeredAt, downloadCount } }
+    let users = JSON.parse(localStorage.getItem('furibeta_users') || '{}');
+    let totalDownloads = 0;
+
+    // Подсчитываем общее количество скачиваний
+    function calculateTotalDownloads() {
+        totalDownloads = 0;
+        Object.values(users).forEach(user => {
+            totalDownloads += (user.downloadCount || 0);
+        });
+        return totalDownloads;
+    }
+
+    const DOWNLOAD_URL = 'https://downloader.disk.yandex.ru/disk/22e6abeae583f38873e32ce43f2a076d2706ef6a0ef1e37977f85ffcbf416cd0/69c19151/FUuuMDaUqx0769UIrdx-A1op4wjuvVEDeeJRp3sT0-ekBae3M4wbF_uFDBrCfodK3uBeUxMavbGCjx6s1elRSQ%3D%3D?uid=2206974105&filename=FuriBeta%20v5b4.jar&disposition=attachment&hash=&limit=0&content_type=application%2Fjava-archive&owner_uid=2206974105&fsize=23639442&hid=0e6423c81e8a6fd546110407ed19fd3f&media_type=unknown&tknv=v3&etag=eaf50ca9199b05b20af62430432578f0';
+
+    let currentUser = null;
+    const savedUser = localStorage.getItem('furibeta_current_user');
+    if (savedUser) {
+        try {
+            const parsed = JSON.parse(savedUser);
+            if (users[parsed.username]) {
+                currentUser = parsed;
+            }
+        } catch(e) {}
+    }
+
+    function updateStats() {
+        const userCount = Object.keys(users).length;
+        const total = calculateTotalDownloads();
+        document.getElementById('downloadCount').innerText = total;
+        document.getElementById('userCount').innerText = userCount;
+    }
+
+    // Формирование таблицы со списком пользователей (для модального окна)
+    function renderUsersTable() {
+        const container = document.getElementById('usersTableContainer');
+        if (!container) return;
+        const usersArray = Object.keys(users).map(username => ({
+            username: username,
+            registeredAt: users[username].registeredAt,
+            downloadCount: users[username].downloadCount || 0
+        }));
+
+        if (usersArray.length === 0) {
+            container.innerHTML = '<p style="color:#666;">Пока нет зарегистрированных пользователей</p>';
+            return;
+        }
+
+        let html = `<tr><thead>%
+            <th>👤 Пользователь</th>
+            <th>📅 Дата регистрации</th>
+            <th>📥 Скачиваний</th>
+        </tr></thead><tbody>`;
+
+        usersArray.forEach(user => {
+            html += `<tr>
+                <td>${escapeHtml(user.username)}</td>
+                <td>${user.registeredAt}</td>
+                <td style="color: #7cb518; font-weight: bold;">${user.downloadCount}</td>
+            </tr>`;
+        });
+        html += '</tbody> </table>';
+        container.innerHTML = html;
+    }
+
+    function updateUI() {
+        const profileBtn = document.getElementById('profileBtn');
+        const profileSection = document.getElementById('profileSection');
+        const profileInfo = document.getElementById('profileInfo');
+        const showUsersBtn = document.getElementById('showUsersBtn');
+
+        if (currentUser) {
+            profileBtn.innerHTML = `👤 ${currentUser.username}`;
+            profileSection.style.display = 'block';
+            profileInfo.innerHTML = `
+                <h3>${currentUser.username}</h3>
+                <p>📅 Дата регистрации: ${currentUser.registeredAt}</p>
+                <p>📥 Вы скачали чит: <span style="color:#7cb518; font-weight:bold;">${users[currentUser.username]?.downloadCount || 0}</span> раз(а)</p>
+                <p>📊 Всего скачиваний: ${calculateTotalDownloads()}</p>
+                <button class="btn" id="logoutBtn">🚪 Выйти</button>
+            `;
+            document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                currentUser = null;
+                localStorage.removeItem('furibeta_current_user');
+                updateUI();
+                showNotification('Вы вышли из аккаунта');
+            });
+
+            // Кнопка "Список пользователей" видна только админу 3afif
+            if (currentUser.username === '3afif') {
+                showUsersBtn.style.display = 'inline-block';
+                renderUsersTable();
+            } else {
+                showUsersBtn.style.display = 'none';
+            }
+        } else {
+            profileBtn.innerHTML = '👤 Войти';
+            profileSection.style.display = 'none';
+            showUsersBtn.style.display = 'none';
+        }
+        updateStats();
+    }
+
+    // Скачивание — увеличивает счётчик для текущего пользователя и общий
+    function downloadFile() {
+        if (!currentUser) {
+            showNotification('Сначала войдите в аккаунт!');
+            return;
+        }
+
+        // Увеличиваем счётчик скачиваний для пользователя
+        if (users[currentUser.username]) {
+            users[currentUser.username].downloadCount = (users[currentUser.username].downloadCount || 0) + 1;
+            localStorage.setItem('furibeta_users', JSON.stringify(users));
+        }
+
+        updateStats();
+        updateUI();
+
+        const link = document.createElement('a');
+        link.href = DOWNLOAD_URL;
+        link.download = 'FuriBeta_v5b4.jar';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showNotification(`Скачивание FuriBeta началось! (${users[currentUser.username]?.downloadCount || 0} скачиваний)`);
+    }
+
+    // Авторизация и регистрация
+    function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+    function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; document.getElementById('authUsername').value = ''; document.getElementById('authPassword').value = ''; }
+
+    function handleAuth() {
+        const isLogin = document.getElementById('authTitle').innerText === 'Вход в аккаунт';
+        const username = document.getElementById('authUsername').value.trim();
+        const password = document.getElementById('authPassword').value;
+        if (!username || !password) return showNotification('Заполните все поля');
+
+        const ADMIN_USERNAME = '3afif';
+        const ADMIN_PASSWORD = 'Rod20052011';
+
+        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            if (!users[ADMIN_USERNAME]) {
+                users[ADMIN_USERNAME] = {
+                    password: ADMIN_PASSWORD,
+                    registeredAt: new Date().toLocaleString(),
+                    downloadCount: 0
+                };
+                localStorage.setItem('furibeta_users', JSON.stringify(users));
+            }
+            currentUser = { username: ADMIN_USERNAME, registeredAt: users[ADMIN_USERNAME].registeredAt };
+            localStorage.setItem('furibeta_current_user', JSON.stringify(currentUser));
+            updateUI(); closeAuthModal(); showNotification(`Добро пожаловать, Администратор!`);
+            return;
+        }
+
+        if (isLogin) {
+            if (users[username] && users[username].password === password) {
+                currentUser = { username, registeredAt: users[username].registeredAt };
+                localStorage.setItem('furibeta_current_user', JSON.stringify(currentUser));
+                updateUI(); closeAuthModal(); showNotification(`Добро пожаловать, ${username}!`);
+            } else showNotification('Неверное имя или пароль');
+        } else {
+            if (users[username]) return showNotification('Пользователь уже существует');
+            users[username] = {
+                password,
+                registeredAt: new Date().toLocaleString(),
+                downloadCount: 0
+            };
+            localStorage.setItem('furibeta_users', JSON.stringify(users));
+            currentUser = { username, registeredAt: users[username].registeredAt };
+            localStorage.setItem('furibeta_current_user', JSON.stringify(currentUser));
+            updateUI(); closeAuthModal(); showNotification(`Регистрация успешна! Добро пожаловать, ${username}!`);
+        }
+    }
+
+    function switchAuthMode() {
+        const title = document.getElementById('authTitle');
+        const switchBtn = document.getElementById('authSwitch');
+        const submitBtn = document.getElementById('authSubmit');
+        if (title.innerText === 'Вход в аккаунт') {
+            title.innerText = 'Регистрация';
+            switchBtn.innerText = 'Уже есть аккаунт? Войти';
+            submitBtn.innerText = 'Зарегистрироваться';
+        } else {
+            title.innerText = 'Вход в аккаунт';
+            switchBtn.innerText = 'Нет аккаунта? Зарегистрироваться';
+            submitBtn.innerText = 'Войти';
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Показ модального окна со списком пользователей
+    function showUsersModal() {
+        renderUsersTable();
+        document.getElementById('usersModal').style.display = 'flex';
+    }
+
+    function closeUsersModal() {
+        document.getElementById('usersModal').style.display = 'none';
+    }
+
+    // Инициализация событий
+    document.getElementById('profileBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentUser) {
+            document.getElementById('profileSection').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            showAuthModal();
+        }
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', downloadFile);
+    document.getElementById('authSubmit').addEventListener('click', handleAuth);
+    document.getElementById('authSwitch').addEventListener('click', switchAuthMode);
+    document.getElementById('closeModal').addEventListener('click', closeAuthModal);
+    document.getElementById('showUsersBtn').addEventListener('click', showUsersModal);
+    document.getElementById('closeUsersModal').addEventListener('click', closeUsersModal);
+
+    // Закрытие модалки по клику вне
+    document.getElementById('usersModal').addEventListener('click', function(e) {
+        if (e.target === this) closeUsersModal();
+    });
+
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    document.getElementById('authModal').addEventListener('click', function(e) {
+        if (e.target === this) closeAuthModal();
+    });
+
+    updateUI();
+
+    window.addEventListener('beforeunload', function() {
+        localStorage.setItem('furibeta_users', JSON.stringify(users));
+        if (currentUser) {
+            localStorage.setItem('furibeta_current_user', JSON.stringify(currentUser));
+        }
+    });
+
+    console.log('%cFuriBeta - Лучший бесплатный чит для Minecraft', 'color: #7cb518; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>
